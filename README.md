@@ -2,8 +2,16 @@
 
 ## Overview
 
-Small app I created to present a really random set of data, reasons unknown.
+Small app I created to present a dataset as HTML with an index, as long as it was in the following fairly specific format:
 
-Yabba dabba do.
+```markdown
+# Heading 1
 
-Goodbye.
+## Heading 2
+
+- Data 1
+- Data 2
+- Data 3
+
+```
+Et cetera.
