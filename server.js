@@ -1,5 +1,5 @@
 const express = require('express');
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 const MarkdownIt = require('markdown-it');
 const anchor = require('markdown-it-anchor');
@@ -13,13 +13,13 @@ const md = new MarkdownIt();
 // Custom slugify function for markdown-it-anchor
 const slugify = s => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 const uniqueSlug = (slug, slugs) => {
-    let uniq = slug;
-    let i = 2;
-    while (slugs[uniq]) {
-        uniq = `${slug}-${i++}`;
-    }
-    slugs[uniq] = true;
-    return uniq;
+  let uniq = slug;
+  let i = 2;
+  while (slugs[uniq]) {
+    uniq = `${slug}-${i++}`;
+  }
+  slugs[uniq] = true;
+  return uniq;
 };
 let slugs = {};
 md.use(anchor, { slugify: s => uniqueSlug(slugify(s), slugs) });
@@ -64,44 +64,46 @@ const styles = `
 `;
 
 // Middleware
-app.get('/', (req, res) => {
-    let htmlIndexContent = `${styles}<div class="index">`;
-    let htmlMainContent = "";
+app.get('/', async (req, res) => {
+  let htmlIndexContent = `${styles}<div class="index">`;
+  let htmlMainContent = "";
 
-    fs.readdir(mdPath, (err, files) => {
-      if (err) throw err;
+  try {
+    const files = await fs.readdir(mdPath);
 
-      files.forEach((file, index) => {
-        fs.readFile(path.join(mdPath, file), 'utf8', (err, contents) => {
-          if (err) throw err;
+    const fileContentsPromises = files.map(file => fs.readFile(path.join(mdPath, file), 'utf8'));
+    const fileContents = await Promise.all(fileContentsPromises);
 
-          const html = md.render(contents);
-          htmlMainContent += html;
+    fileContents.forEach((contents, index) => {
+      const html = md.render(contents);
+      htmlMainContent += html;
 
-          // Generate index
-          let isFileIndexOpen = false;
-          const regex = /<h([123]) id="(.*?)">(.*?)<\/h[123]>/g;
-          let match;
-          while ((match = regex.exec(html)) !== null) {
-              let hLevel = match[1];
-              if (hLevel === "1") {
-                if (isFileIndexOpen) htmlIndexContent += `</div></div>`;
-                htmlIndexContent += `<div class="file-index"><a href="#${match[2]}">${match[3]}</a><div class="sub-index">`;
-                isFileIndexOpen = true;
-              } else {
-                htmlIndexContent += `<a href="#${match[2]}">${match[3]}</a> `;
-              }
+      // Generate index
+      let isFileIndexOpen = false;
+      const regex = /<h([123]) id="(.*?)">(.*?)<\/h[123]>/g;
+      let match;
+      while ((match = regex.exec(html)) !== null) {
+          let hLevel = match[1];
+          if (hLevel === "1") {
+            if (isFileIndexOpen) htmlIndexContent += `</div></div>`;
+            htmlIndexContent += `<div class="file-index"><a href="#${match[2]}">${match[3]}</a><div class="sub-index">`;
+            isFileIndexOpen = true;
+          } else {
+            htmlIndexContent += `<a href="#${match[2]}">${match[3]}</a> `;
           }
-          if (isFileIndexOpen) htmlIndexContent += `</div></div>`;
-          if (index === files.length - 1) {
-            htmlIndexContent += `</div>`;
-            htmlMainContent += `<a id="top-link" href="#">top</a>`;
-            res.send(`${htmlIndexContent}${htmlMainContent}`);
-          }
-        });
-      });
+      }
+      if (isFileIndexOpen) htmlIndexContent += `</div></div>`;
     });
-  });
+
+    htmlIndexContent += `</div>`;
+    htmlMainContent += `<a id="top-link" href="#">top</a>`;
+    res.send(`${htmlIndexContent}${htmlMainContent}`);
+
+  } catch(err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
+});
 
 // Start server
 app.listen(port, () => {
