@@ -2,7 +2,7 @@
 
 ## Overview
 
-Small app I created to present a dataset as HTML with an index, as long as it was in the following fairly specific format:
+Phrasing is a small app I created to present a dataset as HTML with an index, as long as it was in the following fairly specific format:
 
 ```markdown
 # Heading 1
@@ -14,7 +14,10 @@ Small app I created to present a dataset as HTML with an index, as long as it wa
 - Data 3
 
 ```
+
 Et cetera.
+
+The name came from the initial dataset, see: [https://bjsmith.xyz/blog/phrasing/]
 
 ## How do
 
