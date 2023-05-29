@@ -68,6 +68,7 @@
 - hushed into silence
 
 ## I
+
 - incursions into controversy
 - insight into truth
 - inveigled into dispute
@@ -75,7 +76,7 @@
 
 ## K
 
-kindle into action
+- kindle into action
 
 ## L
 

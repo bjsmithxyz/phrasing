@@ -23,5 +23,14 @@ The name came from the initial dataset, see: [https://bjsmith.xyz/blog/phrasing/
 
 1. Download this project locally.
 1. Place any number of .md files formatted as above into the 'md_files' directory.
-1. Run `npm install express` to install Express.js.
-1. Run `node server.js` to run the server locally at http://localhost:8080
+1. Run the following to install Express.js:
+
+    `npm install express`
+1. Run the following to install Fuse.js:
+
+    `npm install fuse.js`
+1. Run the following to start the server locally, published at [http://localhost:8080] by default:
+
+    `node server.js`
+1. ???
+1. Search stuff
