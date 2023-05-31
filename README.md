@@ -32,5 +32,7 @@ The name came from the initial dataset, see: [https://bjsmith.xyz/blog/phrasing/
 1. Run the following to start the server locally, published at [http://localhost:8080] by default:
 
     `node server.js`
-1. ???
+1. Publish to GitHub
+1. Manually run the workflow in Actions
+1. Wait for deploy
 1. Search stuff
