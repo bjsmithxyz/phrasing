@@ -3,32 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %> - Phrasing</title>
-    <meta name="description" content="<%= description || 'Searchable phrase collection with powerful search capabilities' %>">
-    
-    <!-- Security and Performance -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    
-    <!-- Preload critical resources -->
-    <link rel="preload" href="/css/styles.css" as="style">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.min.js" as="script">
+    <title><%= title %></title>
+    <meta name="description" content="Simple markdown phrase collection browser">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/styles.css">
-    
-    <!-- External Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.min.js"></script>
-    
-    <% if (locals.customCSS) { %>
-        <style><%= customCSS %></style>
-    <% } %>
 </head>
 <body>
-    <!-- Skip to main content for accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    
     <!-- Header -->
     <header class="site-header">
         <nav class="nav-container">
@@ -36,11 +17,8 @@
                 <a href="/">Phrasing</a>
             </h1>
             <div class="nav-actions">
-                <button id="theme-toggle" class="btn-icon" title="Toggle theme" aria-label="Toggle dark/light theme">
+                <button id="theme-toggle" class="btn-icon" title="Toggle theme">
                     🌙
-                </button>
-                <button id="search-toggle" class="btn-icon" title="Focus search (Ctrl+K)" aria-label="Focus search">
-                    🔍
                 </button>
             </div>
         </nav>
@@ -54,28 +32,14 @@
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-content">
-            <p>&copy; <%= new Date().getFullYear() %> Phrasing - Searchable Phrase Collection</p>
-            <div class="footer-stats">
-                <% if (locals.stats) { %>
-                    <span>📄 <%= stats.totalFiles %> files</span>
-                    <span>📝 <%= stats.totalPhrases %> phrases</span>
-                    <span>⚡ Cached: <%= stats.cacheSize %> items</span>
-                <% } %>
-            </div>
+            <p>&copy; <%= new Date().getFullYear() %> Phrasing - Simple Phrase Collection</p>
+            <% if (locals.totalFiles) { %>
+                <span>📄 <%= totalFiles %> files</span>
+            <% } %>
         </div>
     </footer>
 
     <!-- JavaScript -->
     <script src="/js/app.js"></script>
-    <script src="/js/search.js"></script>
-    
-    <% if (locals.customJS) { %>
-        <script><%= customJS %></script>
-    <% } %>
-
-    <!-- Analytics placeholder -->
-    <% if (process.env.NODE_ENV === 'production' && locals.analytics) { %>
-        <!-- Analytics code would go here -->
-    <% } %>
 </body>
 </html>

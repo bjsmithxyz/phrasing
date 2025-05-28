@@ -1,38 +1,70 @@
-# PHRASING
+# Phrasing - Simple Phrase Collection Browser
 
-## Overview
+A simple web application for browsing markdown phrase collections.
 
-Phrasing is a small app I created to present a dataset as HTML with an index, as long as it was in the following fairly specific format:
+## Features
 
-```markdown
-# Heading 1
+- 📝 **Markdown Processing**: Automatically renders markdown files with navigation
+- 🌙 **Dark/Light Theme**: Toggle between themes with browser preference support
+- 📱 **Responsive Design**: Works on desktop and mobile devices
+- 🔗 **Smooth Navigation**: Anchor links with smooth scrolling
 
-## Heading 2
+## Quick Start
 
-- Data 1
-- Data 2
-- Data 3
+### Prerequisites
 
+- Node.js 16+
+- npm
+
+### Installation
+
+1. **Clone and install**
+   ```bash
+   git clone <repository-url>
+   cd phrasing
+   npm install
+   ```
+
+2. **Add your content**
+   
+   Place markdown files in the `md_files/` directory:
+   
+   ```markdown
+   # Your Content
+   
+   Your phrases and content here...
+   ```
+
+3. **Start the server**
+   ```bash
+   npm start
+   ```
+
+4. **Open your browser**
+   
+   Navigate to `http://localhost:8080`
+
+## Development
+
+```bash
+npm run dev  # Start with auto-reload
 ```
 
-Et cetera.
+## Project Structure
 
-The name came from the initial dataset, see: [https://bjsmith.xyz/blog/phrasing/]
+```
+phrasing/
+├── server.js              # Main server file
+├── public/                # Static assets
+│   ├── css/styles.css     # Application styles  
+│   └── js/app.js          # Client-side JavaScript
+├── src/
+│   ├── routes/index.js    # Express routes
+│   ├── templates/         # EJS templates
+│   └── utils/fileManager.js # File handling utilities
+└── md_files/              # Your markdown content
+```
 
-## How do
+## License
 
-1. Download this project locally.
-1. Place any number of .md files formatted as above into the 'md_files' directory.
-1. Run the following to install Express.js:
-
-    `npm install express`
-1. Run the following to install Fuse.js:
-
-    `npm install fuse.js`
-1. Run the following to start the server locally, published at [http://localhost:8080] by default:
-
-    `node server.js`
-1. Publish to GitHub
-1. Manually run the workflow in Actions
-1. Wait for deploy
-1. Search stuff
+ISC

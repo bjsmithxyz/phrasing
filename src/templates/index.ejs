@@ -1,95 +1,17 @@
-<!-- Main search and navigation interface -->
-<div class="search-container">
-    <div class="search-bar">
-        <input 
-            id="search-input" 
-            type="text" 
-            placeholder="Search phrases... (Ctrl+K to focus)"
-            aria-label="Search through phrase collections"
-            autocomplete="off"
-            spellcheck="false"
-        >
-        <div class="search-actions">
-            <button id="clear-search" class="btn-clear" title="Clear search" aria-label="Clear search">×</button>
-            <button id="search-options" class="btn-options" title="Search options" aria-label="Show search options">⚙️</button>
-        </div>
-    </div>
-    
-    <!-- Search Statistics -->
-    <div id="search-stats" class="search-stats hidden">
-        <span id="search-results-count">0 results</span>
-        <span id="search-time">in 0ms</span>
-    </div>
-    
-    <!-- Advanced Search Options (initially hidden) -->
-    <div id="search-options-panel" class="search-options-panel hidden">
-        <div class="options-grid">
-            <label>
-                <input type="checkbox" id="case-sensitive"> Case sensitive
-            </label>
-            <label>
-                <input type="checkbox" id="whole-words"> Whole words only
-            </label>
-            <label>
-                <input type="radio" name="search-mode" value="fuzzy" checked> Fuzzy search
-            </label>
-            <label>
-                <input type="radio" name="search-mode" value="exact"> Exact match
-            </label>
-        </div>
-    </div>
-</div>
-
 <!-- Navigation Index -->
 <div class="index-container">
-    <h2 class="index-title">
-        <span>📚 Collections</span>
-        <button id="collapse-index" class="btn-icon" title="Collapse/expand index">−</button>
-    </h2>
-    <div id="index-content" class="index">
-        <%- indexHtml %>
+    <h2 class="index-title">📚 Collections</h2>
+    <div class="index">
+        <%- indexContent %>
     </div>
 </div>
 
 <!-- Main Content Area -->
 <div class="content-container">
-    <div id="content" class="content">
-        <!-- Search results will be displayed here when searching -->
-        <div id="search-results" class="search-results hidden">
-            <h3>Search Results</h3>
-            <div id="results-list"></div>
-            
-            <!-- Pagination -->
-            <div id="pagination" class="pagination hidden">
-                <button id="prev-page" class="btn-nav" disabled>← Previous</button>
-                <span id="page-info">Page 1 of 1</span>
-                <button id="next-page" class="btn-nav" disabled>Next →</button>
-            </div>
-        </div>
-        
-        <!-- Default content (all phrases) -->
-        <div id="all-content" class="all-content">
-            <%- contentHtml %>
-        </div>
+    <div class="content">
+        <%- mainContent %>
     </div>
 </div>
 
-<!-- Floating action button for scroll to top -->
-<button id="scroll-to-top" class="scroll-to-top hidden" title="Scroll to top" aria-label="Scroll to top">
-    ↑
-</button>
-
-<!-- Loading indicator -->
-<div id="loading" class="loading hidden">
-    <div class="spinner"></div>
-    <span>Loading...</span>
-</div>
-
-<!-- Error display -->
-<div id="error-display" class="error-display hidden">
-    <div class="error-content">
-        <h3>⚠️ Error</h3>
-        <p id="error-message"></p>
-        <button id="dismiss-error" class="btn-primary">Dismiss</button>
-    </div>
-</div>
+<!-- Scroll to top button -->
+<a id="top-link" href="#" class="top-link">↑ Top</a>
