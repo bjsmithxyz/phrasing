@@ -51,17 +51,10 @@
 ### 🚀 **Content & Organization**
 
 - 🔄 Add category tags or filtering by phrase type (business, literary, etc.)
-- 🔄 Implement bookmarking/favorites system for frequently used phrases
-- 🔄 Add phrase usage examples, context, or etymology information
-- 🔄 Export functionality for selected phrases (PDF, plain text, etc.)
-- 🔄 Import capability for new markdown collections
 
 ### 🔧 **Advanced Technical Features**
 
-- 🔄 Advanced keyboard shortcuts for power users (Vim-style navigation)
 - 🔄 Implement client-side caching for better performance
-- 🔄 Add phrase statistics and analytics (most viewed, word counts)
-- 🔄 Progressive Web App (PWA) features for offline usage
 - 🔄 Full-text search across all collections with ranking
 
 ### 🎨 **UI/UX Enhancements**
@@ -70,7 +63,6 @@
 - 🔄 Font size controls and typography customization
 - 🔄 Print-friendly styling with proper page breaks
 - 🔄 Better mobile gesture support (swipe navigation)
-- 🔄 Customizable layout options (sidebar position, widths)
 
 ### 🌐 **Accessibility & Internationalization**
 
@@ -78,7 +70,6 @@
 - 🔄 High contrast mode support for visual accessibility
 - 🔄 Enhanced focus indicators for keyboard-only navigation
 - 🔄 Semantic markup improvements for better screen reader support
-- 🔄 Multi-language support for interface elements
 
 ## 💡 Development Principles
 
@@ -109,18 +100,6 @@
 - **~46 lines** of clean Express.js server code
 - **Minimal dependencies** - only 4 core packages for security and maintainability
 - **Lightning fast** - client-side search and rendering, no database required
-
-## 🤝 Contributing Guidelines
-
-When adding new features:
-
-1. **Maintain Simplicity** - Avoid feature bloat, focus on core phrase browsing
-2. **Test Thoroughly** - Ensure responsive design works across all devices
-3. **Follow Patterns** - Use existing code style, structure, and conventions
-4. **Document Changes** - Update README.md, CHANGELOG.md, and comments
-5. **Keep Dependencies Minimal** - Avoid adding new packages unless absolutely essential
-6. **Performance First** - Optimize for speed and maintain client-side approach
-7. **Accessibility** - Ensure new features work with screen readers and keyboard navigation
 
 ## 🗂️ File Organization Best Practices
 
