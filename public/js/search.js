@@ -133,7 +133,7 @@ class PhrasingSearch {
     const block = result.item;
     const matches = result.matches && result.matches[0] ? result.matches[0].indices : [];
     
-    let highlightedBlock = this.highlightMatches(block, matches);
+    const highlightedBlock = this.highlightMatches(block, matches);
     p.innerHTML = highlightedBlock;
     
     // Add score indicator for debugging (can be removed in production)

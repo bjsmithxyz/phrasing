@@ -58,7 +58,7 @@ class PhrasingApp {
 
   handleScroll() {
     const topLink = document.getElementById('top-link');
-    if (!topLink) return;
+    if (!topLink) {return;}
 
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     

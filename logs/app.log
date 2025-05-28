@@ -1,0 +1,163 @@
+2025-05-28 19:08:14 [[32minfo[39m]: server_starting {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 40951,
+  "env": "development",
+  "port": 8080,
+  "host": "localhost"
+}
+2025-05-28 19:08:14 [[32minfo[39m]: server_started {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 40951,
+  "port": 8080,
+  "host": "localhost",
+  "env": "development",
+  "cacheEnabled": true
+}
+2025-05-28 19:08:14 [[34mdebug[39m]: [DEV] {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 40951
+}
+2025-05-28 19:08:14 [[32minfo[39m]: FileManager initialized {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 40951,
+  "path": "./md_files"
+}
+2025-05-28 19:08:14 [[32minfo[39m]: file_manager_initialized {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 40951,
+  "markdownPath": "./md_files"
+}
+2025-05-28 19:08:30 [[32minfo[39m]: server_starting {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41087,
+  "env": "development",
+  "port": 8080,
+  "host": "localhost"
+}
+2025-05-28 19:08:30 [[32minfo[39m]: server_started {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41087,
+  "port": 8080,
+  "host": "localhost",
+  "env": "development",
+  "cacheEnabled": true
+}
+2025-05-28 19:08:30 [[34mdebug[39m]: [DEV] {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41087
+}
+2025-05-28 19:08:30 [[32minfo[39m]: FileManager initialized {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41087,
+  "path": "./md_files"
+}
+2025-05-28 19:08:30 [[32minfo[39m]: file_manager_initialized {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41087,
+  "markdownPath": "./md_files"
+}
+2025-05-28 19:08:37 [[32minfo[39m]: server_starting {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41218,
+  "env": "development",
+  "port": 8080,
+  "host": "localhost"
+}
+2025-05-28 19:08:37 [[32minfo[39m]: server_started {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41218,
+  "port": 8080,
+  "host": "localhost",
+  "env": "development",
+  "cacheEnabled": true
+}
+2025-05-28 19:08:37 [[34mdebug[39m]: [DEV] {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41218
+}
+2025-05-28 19:08:37 [[32minfo[39m]: FileManager initialized {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41218,
+  "path": "./md_files"
+}
+2025-05-28 19:08:37 [[32minfo[39m]: file_manager_initialized {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41218,
+  "markdownPath": "./md_files"
+}
+2025-05-28 19:08:48 [[32minfo[39m]: server_shutdown_start {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 41218,
+  "signal": "SIGTERM"
+}
+2025-05-28 19:26:32 [[32minfo[39m]: server_starting {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 44667,
+  "env": "development",
+  "port": 8080,
+  "host": "localhost"
+}
+2025-05-28 19:26:32 [[32minfo[39m]: server_started {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 44667,
+  "port": 8080,
+  "host": "localhost",
+  "env": "development",
+  "cacheEnabled": true
+}
+2025-05-28 19:26:32 [[34mdebug[39m]: [DEV] {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 44667
+}
+2025-05-28 19:26:32 [[32minfo[39m]: FileManager initialized {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 44667,
+  "path": "./md_files"
+}
+2025-05-28 19:26:32 [[32minfo[39m]: file_manager_initialized {
+  "service": "phrasing-app",
+  "version": "1.0.0",
+  "environment": "development",
+  "pid": 44667,
+  "markdownPath": "./md_files"
+}
