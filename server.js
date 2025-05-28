@@ -1,14 +1,19 @@
 // Simple Phrasing Server - Markdown Phrase Browser
 const express = require('express');
 const path = require('path');
+const expressLayouts = require('express-ejs-layouts');
 const routes = require('./src/routes');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Configure view engine
+// Configure view engine and layouts
+app.use(expressLayouts);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/templates'));
+app.set('layout', 'layout');
+app.set('layout extractScripts', true);
+app.set('layout extractStyles', true);
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -22,7 +27,9 @@ app.use((req, res) => {
     title: 'Page Not Found',
     message: 'The page you are looking for could not be found.',
     error: {},
-    statusCode: 404
+    statusCode: 404,
+    showSearch: false,
+    showGoToTop: false
   });
 });
 
@@ -33,7 +40,9 @@ app.use((err, req, res, next) => {
     title: 'Server Error',
     message: 'Something went wrong on the server.',
     error: err,
-    statusCode: err.status || 500
+    statusCode: err.status || 500,
+    showSearch: false,
+    showGoToTop: false
   });
 });
 

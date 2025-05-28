@@ -17,6 +17,7 @@
                 <a href="/">Phrasing</a>
             </h1>
             <div class="nav-actions">
+                <% if (locals.showSearch !== false) { %>
                 <div class="search-container">
                     <input 
                         type="text" 
@@ -28,6 +29,7 @@
                     <span class="search-icon">🔍</span>
                     <button id="search-clear" class="search-clear" title="Clear search">✕</button>
                 </div>
+                <% } %>
                 <button id="theme-toggle" class="btn-icon" title="Toggle theme">
                     🌙
                 </button>
@@ -49,6 +51,11 @@
             <% } %>
         </div>
     </footer>
+
+    <% if (locals.showGoToTop !== false) { %>
+    <!-- Go to Top Button -->
+    <button id="go-to-top" class="go-to-top" title="Go to top">↑</button>
+    <% } %>
 
     <!-- JavaScript -->
     <script src="/js/app.js"></script>

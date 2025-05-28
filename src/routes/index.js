@@ -84,7 +84,9 @@ router.get('/', async (req, res) => {
         title: 'No Content Available',
         message: 'No markdown files found in the content directory.',
         error: {},
-        statusCode: 404
+        statusCode: 404,
+        showSearch: false,
+        showGoToTop: false
       });
     }
 
@@ -94,7 +96,9 @@ router.get('/', async (req, res) => {
       title: 'Phrasing - Phrase Collection',
       indexContent: htmlIndexContent,
       mainContent: htmlMainContent,
-      totalFiles: fileContents.files.length
+      totalFiles: fileContents.files.length,
+      showSearch: true,
+      showGoToTop: true
     });
   } catch (error) {
     console.error('Error rendering main page:', error);
@@ -102,7 +106,9 @@ router.get('/', async (req, res) => {
       title: 'Server Error',
       message: 'Failed to load content',
       error: error,
-      statusCode: 500
+      statusCode: 500,
+      showSearch: false,
+      showGoToTop: false
     });
   }
 });

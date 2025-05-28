@@ -1,134 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %> - Phrasing</title>
-    <meta name="description" content="Simple markdown phrase collection browser">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-    <!-- Header -->
-    <header class="site-header">
-        <nav class="nav-container">
-            <h1 class="site-title">
-                <a href="/">Phrasing</a>
-            </h1>
-            <div class="nav-actions">
-                <button id="theme-toggle" class="btn-icon" title="Toggle theme">
-                    🌙
-                </button>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Main Content -->
-    <main id="main-content" class="main-content">
-        <div class="error-container">
-            <h1><%= statusCode %></h1>
-            <h2><%= title %></h2>
-            <p><%= message %></p>
-            
-            <% if (error && error.stack && process.env.NODE_ENV === 'development') { %>
-                <div class="error-details">
-                    <h3>Development Details:</h3>
-                    <pre><%= error.stack %></pre>
-                </div>
+<!-- Error Content -->
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-icon">
+            <% if (statusCode === 404) { %>
+                📄
+            <% } else { %>
+                ⚠️
             <% } %>
+        </div>
+        
+        <h1 class="error-code"><%= statusCode %></h1>
+        <h2 class="error-title"><%= title %></h2>
+        
+        <div class="error-message">
+            <p><%= message %></p>
+        </div>
+        
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary">
+                🏠 Go Home
+            </a>
             
-            <a href="/">🏠 Go Home</a>
+            <% if (statusCode === 404) { %>
+                <p class="error-suggestion">
+                    Try searching for phrases or check the available collections.
+                </p>
+            <% } %>
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="footer-content">
-            <p>&copy; <%= new Date().getFullYear() %> Phrasing - Simple Phrase Collection</p>
-        </div>
-    </footer>
-
-    <!-- Go to Top Button -->
-    <button id="go-to-top" class="go-to-top" title="Go to top">↑</button>
-
-    <!-- JavaScript -->
-    <script src="/js/app.js"></script>
-</body>
-</html>
-
-<style>
-.error-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    text-align: center;
-    padding: 2rem;
-}
-
-.error-content {
-    max-width: 600px;
-}
-
-.error-code {
-    font-size: 4rem;
-    font-weight: bold;
-    color: #e74c3c;
-    margin-bottom: 1rem;
-}
-
-.error-title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #333;
-}
-
-.error-message {
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    color: #666;
-}
-
-.error-details {
-    text-align: left;
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 4px;
-    margin: 1rem 0;
-}
-
-.error-details pre {
-    white-space: pre-wrap;
-    font-size: 0.9rem;
-    color: #e74c3c;
-}
-
-.error-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 2rem 0;
-}
-
-.error-help {
-    text-align: left;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #eee;
-}
-
-.error-help ul {
-    list-style-position: inside;
-}
-
-.error-help a {
-    color: #3498db;
-    text-decoration: none;
-}
-
-.error-help a:hover {
-    text-decoration: underline;
-}
-</style>
+        
+        <% if (error && error.stack && process.env.NODE_ENV === 'development') { %>
+            <details class="error-details">
+                <summary>Technical Details (Development Mode)</summary>
+                <pre class="error-stack"><%= error.stack %></pre>
+            </details>
+        <% } %>
+    </div>
+</div>
