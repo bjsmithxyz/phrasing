@@ -3,12 +3,51 @@ const fs = require('fs').promises;
 const path = require('path');
 const MarkdownIt = require('markdown-it');
 const anchor = require('markdown-it-anchor');
+const helmet = require('helmet');
+const cors = require('cors');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 
 // Constants and settings
 const app = express();
 const port = process.env.PORT || 8080;
 const mdPath = path.join(__dirname, '/md_files');
 const md = new MarkdownIt();
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: {
+    error: 'Too many requests',
+    message: 'Please try again later',
+    retryAfter: '15 minutes'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Security and performance middleware
+app.use(limiter);
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "cdnjs.cloudflare.com"],
+      fontSrc: ["'self'"],
+      imgSrc: ["'self'", "data:"],
+    },
+  },
+}));
+app.use(cors());
+app.use(compression());
+
+// Middleware for static files
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1d', // Cache static files for 1 day
+  etag: true
+}));
 
 // Custom slugify function for markdown-it-anchor
 const slugify = s => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
@@ -24,85 +63,145 @@ const uniqueSlug = (slug, slugs) => {
 let slugs = {};
 md.use(anchor, { slugify: s => uniqueSlug(slugify(s), slugs) });
 
-// CSS Styles
-const styles = `
-<style>
-  body {
-    font-family: Consolas, monospace;
-    font-size: 12px;
-    color: #d1d5db;
-    background-color: #282a36;
-    margin: 50px 100px;
-  }
-  .index {
-    max-width: 500px;
-    overflow-x: auto;
-  }
-  .index .file-index {
-    font-size: 10px;
-    margin-bottom: 1em;
-  }
-  .index .file-index a {
-    margin: 0.1em;
-  }
-  .index .sub-index {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  a:link {
-    color: #BD93F9;
-  }
-  a:visited {
-    color: #FF79C6;
-  }
-  #top-link {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-  }
-  #search-input {
-    width: calc(100% - 200px);
-    margin: 20px 100px;
-    background-color: #282a36;
-    color: #d1d5db;
-    border: 1px solid #d1d5db;
-    font-family: Consolas, monospace;
-  }
-  mark {
-    background-color: #50fa7b;
-    color: black;
-  }
-  ::selection {
-    background: #50fa7b;
-    color: black;
-  }
-</style>
+// Simple in-memory cache
+const cache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Cache helper functions
+const getCacheKey = (type, params = '') => `${type}_${params}`;
+const isValidCache = (item) => item && (Date.now() - item.timestamp) < CACHE_DURATION;
+const setCache = (key, data) => cache.set(key, { data, timestamp: Date.now() });
+const getCache = (key) => {
+  const item = cache.get(key);
+  return isValidCache(item) ? item.data : null;
+};
+
+// Error handling helper
+const handleError = (res, error, message = 'An error occurred') => {
+  console.error('Error:', error);
+  res.status(500).json({ 
+    error: message,
+    timestamp: new Date().toISOString(),
+    ...(process.env.NODE_ENV === 'development' && { details: error.message })
+  });
+};
+
+// File validation helper
+const isValidMarkdownFile = (filename) => {
+  return filename.endsWith('.md') && !filename.startsWith('.');
+};
+
+// HTML template helpers
+const getHTMLHead = () => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phrasing - Searchable Phrase Collection</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.min.js"></script>
+</head>
+<body>
+`;
+
+const getHTMLFooter = () => `
+    <script src="/js/app.js"></script>
+    <script src="/js/search.js"></script>
+</body>
+</html>
 `;
 
 // Middleware to serve file contents
 app.get('/data', async (req, res) => {
+  const cacheKey = getCacheKey('fileContents');
+  
+  // Check cache first
+  const cachedData = getCache(cacheKey);
+  if (cachedData) {
+    return res.json(cachedData);
+  }
+
   try {
+    // Validate directory exists
+    await fs.access(mdPath);
+    
     const files = await fs.readdir(mdPath);
-    const fileContentsPromises = files.map(file => fs.readFile(path.join(mdPath, file), 'utf8'));
+    const markdownFiles = files.filter(isValidMarkdownFile);
+    
+    if (markdownFiles.length === 0) {
+      return res.status(404).json({ 
+        error: 'No markdown files found',
+        timestamp: new Date().toISOString() 
+      });
+    }
+
+    const fileContentsPromises = markdownFiles.map(async file => {
+      try {
+        return await fs.readFile(path.join(mdPath, file), 'utf8');
+      } catch (error) {
+        console.warn(`Failed to read file ${file}:`, error.message);
+        return ''; // Return empty string for failed files
+      }
+    });
+    
     const fileContents = await Promise.all(fileContentsPromises);
-    res.json(fileContents);
-  } catch(err) {
-    console.error(err);
-    res.status(500).send('An error occurred');
+    const validContents = fileContents.filter(content => content.length > 0);
+    
+    // Cache the results
+    setCache(cacheKey, validContents);
+    
+    res.set('Cache-Control', 'public, max-age=300'); // 5 minutes
+    res.json(validContents);
+  } catch(error) {
+    handleError(res, error, 'Failed to load markdown files');
   }
 });
 
 // Middleware to serve index page
 app.get('/', async (req, res) => {
-  let htmlIndexContent = `${styles}<div class="index">`;
+  const cacheKey = getCacheKey('mainPage');
+  
+  // Check cache first
+  const cachedHTML = getCache(cacheKey);
+  if (cachedHTML) {
+    res.set('Cache-Control', 'public, max-age=300'); // 5 minutes
+    return res.send(cachedHTML);
+  }
+
+  let htmlIndexContent = `<div class="index">`;
   let htmlMainContent = "";
 
   try {
+    // Validate directory exists
+    await fs.access(mdPath);
+    
     const files = await fs.readdir(mdPath);
-    const fileContentsPromises = files.map(file => fs.readFile(path.join(mdPath, file), 'utf8'));
-    const fileContents = await Promise.all(fileContentsPromises);
+    const markdownFiles = files.filter(isValidMarkdownFile);
+    
+    if (markdownFiles.length === 0) {
+      const errorHTML = getHTMLHead() + 
+        `<div style="text-align: center; margin-top: 50px;">
+          <h1>No Content Available</h1>
+          <p>No markdown files found in the content directory.</p>
+        </div>` + 
+        getHTMLFooter();
+      return res.send(errorHTML);
+    }
 
-    fileContents.forEach((contents, index) => {
+    const fileContentsPromises = markdownFiles.map(async file => {
+      try {
+        return await fs.readFile(path.join(mdPath, file), 'utf8');
+      } catch (error) {
+        console.warn(`Failed to read file ${file}:`, error.message);
+        return ''; // Return empty string for failed files
+      }
+    });
+    
+    const fileContents = await Promise.all(fileContentsPromises);
+    const validContents = fileContents.filter(content => content.length > 0);
+
+    validContents.forEach((contents, index) => {
       const html = md.render(contents);
       htmlMainContent += html;
 
@@ -128,73 +227,54 @@ app.get('/', async (req, res) => {
 
     // Add search bar
     htmlIndexContent += `
-    <input id="search-input" type="text" placeholder="Search..." style="width: calc(100% - 200px); margin: 20px 100px;">
+    <input id="search-input" type="text" placeholder="Search...">
     <div id="content"></div>
     `;
 
-    // Add Fuse.js library
-    htmlMainContent += `
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.min.js"></script>
-    `;
+    const fullHTML = getHTMLHead() + htmlIndexContent + htmlMainContent + getHTMLFooter();
+    
+    // Cache the result
+    setCache(cacheKey, fullHTML);
+    
+    res.set('Cache-Control', 'public, max-age=300'); // 5 minutes
+    res.send(fullHTML);
 
-    // Add search script
-    htmlMainContent += `
-    <script>
-      fetch('/data')
-        .then(response => response.json())
-        .then(data => {
-          // Split the content of each file into blocks
-          const blocks = data.flatMap(fileContent => fileContent.split('\\n'));
-
-          const options = {
-            includeScore: true,
-            includeMatches: true,
-            keys: ['0'], // search in the content of the blocks
-            limit: 10 // limit the number of results
-          };
-          const fuse = new Fuse(blocks, options);
-
-          let timeoutId;
-          document.getElementById('search-input').addEventListener('input', function(e) {
-            clearTimeout(timeoutId); // clear the previous timeout
-            timeoutId = setTimeout(() => { // set a new timeout
-              const searchValue = e.target.value;
-              const results = fuse.search(searchValue);
-
-              // Update the display based on the results
-              const contentDiv = document.getElementById('content');
-              contentDiv.innerHTML = '';
-              results.forEach(result => {
-                const p = document.createElement('p');
-                // Highlight the search term in the block
-                const block = result.item;
-                const matches = result.matches[0].indices;
-                let highlightedBlock = '';
-                let lastIndex = 0;
-                matches.forEach(match => {
-                  highlightedBlock += block.substring(lastIndex, match[0]);
-                  highlightedBlock += '<mark>' + block.substring(match[0], match[1] + 1) + '</mark>';
-                  lastIndex = match[1] + 1;
-                });
-                highlightedBlock += block.substring(lastIndex);
-                p.innerHTML = highlightedBlock;
-                contentDiv.appendChild(p);
-              });
-            }, 300); // wait 300ms after the user has stopped typing
-          });
-        });
-    </script>
-    `;
-
-    res.send(`${htmlIndexContent}${htmlMainContent}`);
-
-  } catch(err) {
-    console.error(err);
-    res.status(500).send('An error occurred');
+  } catch(error) {
+    handleError(res, error, 'Failed to generate page content');
   }
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    cache_size: cache.size
+  });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: 'The requested resource does not exist',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Global error handler
+app.use((error, req, res, next) => {
+  console.error('Unhandled error:', error);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: 'Something went wrong on the server',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Start server
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
+  console.log(`Health check available at http://localhost:${port}/health`);
 });
