@@ -24,60 +24,10 @@ const uniqueSlug = (slug, slugs) => {
 let slugs = {};
 md.use(anchor, { slugify: s => uniqueSlug(slugify(s), slugs) });
 
-// CSS Styles
-const styles = `
-<style>
-  body {
-    font-family: Consolas, monospace;
-    font-size: 12px;
-    color: #d1d5db;
-    background-color: #282a36;
-    margin: 50px 100px;
-  }
-  .index {
-    max-width: 500px;
-    overflow-x: auto;
-  }
-  .index .file-index {
-    font-size: 10px;
-    margin-bottom: 1em;
-  }
-  .index .file-index a {
-    margin: 0.1em;
-  }
-  .index .sub-index {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  a:link {
-    color: #BD93F9;
-  }
-  a:visited {
-    color: #FF79C6;
-  }
-  #top-link {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-  }
-  #search-input {
-    width: calc(100% - 200px);
-    margin: 20px 100px;
-    background-color: #282a36;
-    color: #d1d5db;
-    border: 1px solid #d1d5db;
-    font-family: Consolas, monospace;
-  }
-  mark {
-    background-color: #50fa7b;
-    color: black;
-  }
-  ::selection {
-    background: #50fa7b;
-    color: black;
-  }
-</style>
-`;
+// Serve static assets from public/
+app.use(express.static(path.join(__dirname, 'public')));
+// Small HTML snippet that links the external stylesheet
+const stylesLink = `<link rel="stylesheet" href="/styles.css">`;
 
 // Middleware to serve file contents
 app.get('/data', async (req, res) => {
@@ -94,7 +44,7 @@ app.get('/data', async (req, res) => {
 
 // Middleware to serve index page
 app.get('/', async (req, res) => {
-  let htmlIndexContent = `${styles}<div class="index">`;
+  let htmlIndexContent = `<div class="index">`;
   let htmlMainContent = "";
 
   try {
@@ -127,64 +77,20 @@ app.get('/', async (req, res) => {
     htmlMainContent += `<a id="top-link" href="#">top</a>`;
 
     // Add search bar
-    htmlIndexContent += `
-    <input id="search-input" type="text" placeholder="Search..." style="width: calc(100% - 200px); margin: 20px 100px;">
-    <div id="content"></div>
-    `;
+    // Wrap the index and search input in a topbar so the search sits to the right of the links
+    // and the results are rendered below the input. Styles are now served from /public/styles.css
+    htmlIndexContent = `${stylesLink}<div class="topbar">` + htmlIndexContent.replace(/^[\s\S]*$/, htmlIndexContent) + `
+    <div class="search-container">
+      <input id="search-input" type="text" placeholder="Search...">
+      <div id="content"></div>
+    </div>
+    </div>`;
 
-    // Add Fuse.js library
-    htmlMainContent += `
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.min.js"></script>
-    `;
-
-    // Add search script
-    htmlMainContent += `
-    <script>
-      fetch('/data')
-        .then(response => response.json())
-        .then(data => {
-          // Split the content of each file into blocks
-          const blocks = data.flatMap(fileContent => fileContent.split('\\n'));
-
-          const options = {
-            includeScore: true,
-            includeMatches: true,
-            keys: ['0'], // search in the content of the blocks
-            limit: 10 // limit the number of results
-          };
-          const fuse = new Fuse(blocks, options);
-
-          let timeoutId;
-          document.getElementById('search-input').addEventListener('input', function(e) {
-            clearTimeout(timeoutId); // clear the previous timeout
-            timeoutId = setTimeout(() => { // set a new timeout
-              const searchValue = e.target.value;
-              const results = fuse.search(searchValue);
-
-              // Update the display based on the results
-              const contentDiv = document.getElementById('content');
-              contentDiv.innerHTML = '';
-              results.forEach(result => {
-                const p = document.createElement('p');
-                // Highlight the search term in the block
-                const block = result.item;
-                const matches = result.matches[0].indices;
-                let highlightedBlock = '';
-                let lastIndex = 0;
-                matches.forEach(match => {
-                  highlightedBlock += block.substring(lastIndex, match[0]);
-                  highlightedBlock += '<mark>' + block.substring(match[0], match[1] + 1) + '</mark>';
-                  lastIndex = match[1] + 1;
-                });
-                highlightedBlock += block.substring(lastIndex);
-                p.innerHTML = highlightedBlock;
-                contentDiv.appendChild(p);
-              });
-            }, 300); // wait 300ms after the user has stopped typing
-          });
-        });
-    </script>
-    `;
+  // Include Fuse.js CDN and external app script
+  htmlMainContent += `
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.min.js"></script>
+  <script src="/app.js"></script>
+  `;
 
     res.send(`${htmlIndexContent}${htmlMainContent}`);
 

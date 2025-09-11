@@ -81,6 +81,24 @@ Prerequisites: Node.js (14+ recommended) and npm.
 - Client-side search is provided by Fuse.js; markdown rendering uses markdown-it.
 - If you want to add new dependencies, update `package.json` and run `npm install`.
 
+## UI / Search layout
+
+The top-left index links remain in place. The search input was moved to a right-side search area next to the links and the results appear below the input.
+
+If you'd like to tweak the layout or sizing, edit `server.js` and change the following CSS selectors embedded near the top of the file:
+
+- `.topbar { gap: 30px; }` — controls the horizontal gap between the left links and the search area (set between 25px and 50px as desired).
+- `#search-input { font-size: 20px; }` — controls the visual scale of the input (increase/decrease for larger/smaller input).
+- `#search-input { width: calc(100% - 20px); }` — leaves a small gap on the far right of the input; adjust the 20px value to change that gap.
+
+After editing, restart the server to see your changes locally:
+
+```bash
+node server.js
+```
+
+Open `http://localhost:8080` in a browser to verify the layout.
+
 ## Deploy
 
 If you use GitHub, push your branch and run any configured GitHub Actions workflows to publish the site (if a deployment workflow is present). This project contains a `web.config` and may be wired to a deployment pipeline — adapt deployments to your hosting provider.

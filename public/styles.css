@@ -1,0 +1,94 @@
+/* Extracted styles from server.js */
+body {
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  color: #d1d5db;
+  background-color: #282a36;
+  margin: 50px 100px;
+}
+/* Top bar that contains the left links (index) and the right search area */
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px; /* slight gap between links and search area (25-50px requested) */
+  width: calc(100% - 200px);
+}
+.index {
+  max-width: 500px;
+  overflow-x: auto;
+}
+.index .file-index {
+  font-size: 10px;
+  margin-bottom: 1em;
+}
+.index .file-index a {
+  margin: 0.1em;
+}
+.index .sub-index {
+  display: flex;
+  flex-wrap: wrap;
+}
+/* Search container takes remaining horizontal space */
+.search-container {
+  flex: 1 1 auto;
+  min-width: 200px;
+}
+a:link {
+  color: #BD93F9;
+}
+a:visited {
+  color: #FF79C6;
+}
+#top-link {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+}
+/* Larger input: visually roughly twice the previous size via font-size and padding.
+   Input spans its container left-to-right and leaves a small gap on the far right. */
+#search-input {
+  width: calc(100% - 20px); /* small gap on far right */
+  font-size: 20px; /* increase for ~2x scale from 12px base */
+  padding: 10px 12px;
+  margin: 20px 0;
+  background-color: #282a36;
+  color: #d1d5db;
+  border: 1px solid #d1d5db;
+  font-family: Consolas, monospace;
+  box-sizing: border-box;
+}
+/* Search results appear below the input */
+#content {
+  margin-top: 10px;
+}
+mark {
+  background-color: #50fa7b;
+  color: black;
+}
+::selection {
+  background: #50fa7b;
+  color: black;
+}
+
+/* Responsive: stack the topbar vertically on narrow viewports */
+@media (max-width: 800px) {
+  body {
+    margin: 20px;
+  }
+  .topbar {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .index {
+    max-width: none;
+    overflow-x: visible;
+  }
+  .search-container {
+    min-width: 0;
+  }
+  #search-input {
+    width: 100%;
+  }
+}
