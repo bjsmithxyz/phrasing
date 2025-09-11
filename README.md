@@ -35,4 +35,60 @@ The name came from the initial dataset, see: [https://bjsmith.xyz/blog/phrasing/
 1. Publish to GitHub
 1. Manually run the workflow in Actions
 1. Wait for deploy
-1. Search stuff
+# PHRASING
+
+## Overview
+
+Phrasing is a small Node.js app that converts a set of simple Markdown files into an indexed HTML site with client-side search.
+
+It expects each source file to use a lightweight structure like:
+
+```markdown
+# Heading 1
+
+## Heading 2
+
+- Item A
+- Item B
+- Item C
+```
+
+The original dataset that inspired this project lives at: https://bjsmith.xyz/blog/phrasing/
+
+## Quickstart
+
+Prerequisites: Node.js (14+ recommended) and npm.
+
+1. Clone the repo and change into it:
+
+    git clone <repo> && cd phrasing
+
+2. Install dependencies (this will install Express, Fuse.js, markdown-it, etc.):
+
+    npm install
+
+3. Add or edit Markdown files in the `md_files/` directory. Each file should follow the small format shown above.
+
+4. Start the server locally (default: http://localhost:8080):
+
+    npm start
+
+5. Open your browser and go to http://localhost:8080
+
+## Notes
+
+- The app's entry point is `server.js` and the `start` script in `package.json` runs it.
+- Client-side search is provided by Fuse.js; markdown rendering uses markdown-it.
+- If you want to add new dependencies, update `package.json` and run `npm install`.
+
+## Deploy
+
+If you use GitHub, push your branch and run any configured GitHub Actions workflows to publish the site (if a deployment workflow is present). This project contains a `web.config` and may be wired to a deployment pipeline — adapt deployments to your hosting provider.
+
+## Contributing
+
+Feel free to open issues or PRs. Small improvements that help parsing, rendering, or the UI are welcome.
+
+## License
+
+See the repository license (if any) or add one before publishing.
