@@ -1,0 +1,74 @@
+# Build and deploy Node.js app to Azure Web App
+#
+# To configure:
+# 1. Download the Publish Profile from your Azure Web App and add it to
+#    this repository as the secret `AZURE_WEBAPP_PUBLISH_PROFILE`.
+#    IMPORTANT: Do NOT commit the publish profile XML into the repo. Add it
+#    as a GitHub Actions secret (Repository Settings → Secrets) named
+#    `AZURE_WEBAPP_PUBLISH_PROFILE`.
+# 2. Set `AZURE_WEBAPP_NAME` below or provide it when using workflow_dispatch.
+# 3. Adjust `AZURE_WEBAPP_PACKAGE_PATH` if your app lives in a subfolder.
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+    inputs:
+      azure_app_name:
+        description: 'Optional: Azure Web App name (overrides env AZURE_WEBAPP_NAME)'
+        required: false
+        default: ''
+
+env:
+  AZURE_WEBAPP_NAME: phrasing        # the Azure Web App name (from your publish profile)
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      # path to web app project (repo root by default)
+  NODE_VERSION: '20.x'                # node version to use
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies, build and test
+        run: |
+          # Use npm ci when a lockfile exists for reproducible installs
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          npm run build --if-present
+          npm run test --if-present
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: .
+
+  deploy:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: build
+    # No `environment` configured; deployment will run without GitHub Environment protections.
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: node-app
+
+      - name: 'Deploy to Azure WebApp'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ github.event.inputs.azure_app_name || env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
