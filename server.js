@@ -4,36 +4,22 @@ const path = require('path');
 const MarkdownIt = require('markdown-it');
 const anchor = require('markdown-it-anchor');
 
-// Constants and settings
 const app = express();
 const port = process.env.PORT || 8080;
 const mdPath = path.join(__dirname, '/md_files');
 const md = new MarkdownIt();
 
-// Custom slugify function for markdown-it-anchor
+// Custom slugify function
 const slugify = s => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
-const uniqueSlug = (slug, slugs) => {
-  let uniq = slug;
-  let i = 2;
-  while (slugs[uniq]) {
-    uniq = `${slug}-${i++}`;
-  }
-  slugs[uniq] = true;
-  return uniq;
-};
-let slugs = {};
-md.use(anchor, { slugify: s => uniqueSlug(slugify(s), slugs) });
 
-// Serve static assets from public/
 app.use(express.static(path.join(__dirname, 'public')));
-// Small HTML snippet that links the external stylesheet
-const stylesLink = `<link rel="stylesheet" href="/styles.css">`;
 
-// Middleware to serve file contents
+// API to serve raw data for search
 app.get('/data', async (req, res) => {
   try {
     const files = await fs.readdir(mdPath);
-    const fileContentsPromises = files.map(file => fs.readFile(path.join(mdPath, file), 'utf8'));
+    const mdFiles = files.filter(f => f.endsWith('.md'));
+    const fileContentsPromises = mdFiles.map(file => fs.readFile(path.join(mdPath, file), 'utf8'));
     const fileContents = await Promise.all(fileContentsPromises);
     res.json(fileContents);
   } catch(err) {
@@ -42,57 +28,82 @@ app.get('/data', async (req, res) => {
   }
 });
 
-// Middleware to serve index page
 app.get('/', async (req, res) => {
-  let htmlIndexContent = `<div class="index">`;
-  let htmlMainContent = "";
-
   try {
-    const files = await fs.readdir(mdPath);
-    const fileContentsPromises = files.map(file => fs.readFile(path.join(mdPath, file), 'utf8'));
-    const fileContents = await Promise.all(fileContentsPromises);
+    const files = (await fs.readdir(mdPath)).filter(f => f.endsWith('.md'));
+    // Sort files alphabetically
+    files.sort();
 
-    fileContents.forEach((contents, index) => {
-      const html = md.render(contents);
-      htmlMainContent += html;
+    let sidebarHtml = `<div class="sidebar"><h2>Phrasing</h2>`;
+    let mainContentHtml = `<div class="main-content">
+      <div class="search-container">
+        <input id="search-input" type="text" placeholder="Search entries...">
+      </div>
+      <div id="search-results-container"></div>
+      <div id="phrases-container">`;
 
-      // Generate index
-      let isFileIndexOpen = false;
-      const regex = /<h([123]) id="(.*?)">(.*?)<\/h[123]>/g;
-      let match;
-      while ((match = regex.exec(html)) !== null) {
-          let hLevel = match[1];
-          if (hLevel === "1") {
-            if (isFileIndexOpen) htmlIndexContent += `</div></div>`;
-            htmlIndexContent += `<div class="file-index"><a href="#${match[2]}">${match[3]}</a><div class="sub-index">`;
-            isFileIndexOpen = true;
-          } else {
-            htmlIndexContent += `<a href="#${match[2]}">${match[3]}</a> `;
-          }
-      }
-      if (isFileIndexOpen) htmlIndexContent += `</div></div>`;
-    });
+    for (const file of files) {
+      const content = await fs.readFile(path.join(mdPath, file), 'utf8');
+      
+      // We want to generate IDs like #category-a
+      // But markdown-it-anchor does its own thing. 
+      // Let's manually process the content or use a custom slugifier.
+      
+      const categoryMatch = content.match(/^#\s+(.*)/m);
+      const categoryName = categoryMatch ? categoryMatch[1] : file.replace('.md', '');
+      const categoryId = slugify(categoryName);
 
-    htmlIndexContent += `</div>`;
-    htmlMainContent += `<a id="top-link" href="#">top</a>`;
+      // Add category to sidebar
+      sidebarHtml += `<div class="sidebar-category">
+        <a href="#${categoryId}" class="sidebar-category-name">${categoryName}</a>
+        <div class="sidebar-alpha-links">`;
 
-    // Add search bar
-    // Wrap the index and search input in a topbar so the search sits to the right of the links
-    // and the results are rendered below the input. Styles are now served from /public/styles.css
-    htmlIndexContent = `${stylesLink}<div class="topbar">` + htmlIndexContent.replace(/^[\s\S]*$/, htmlIndexContent) + `
-    <div class="search-container">
-      <input id="search-input" type="text" placeholder="Search...">
-      <div id="content"></div>
-    </div>
-    </div>`;
+      // Find all ## [Letter] to add to sidebar and make them unique
+      const letterMatches = [...content.matchAll(/^##\s+([A-Z])/gm)];
+      letterMatches.forEach(match => {
+        const letter = match[1];
+        const letterId = `${categoryId}-${letter.toLowerCase()}`;
+        sidebarHtml += `<a href="#${letterId}">${letter}</a>`;
+      });
+      sidebarHtml += `</div></div>`;
 
-  // Include Fuse.js CDN and external app script
-  htmlMainContent += `
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.min.js"></script>
-  <script src="/app.js"></script>
-  `;
+      // Render markdown with custom IDs
+      // We can't easily tell markdown-it-anchor to use our letterId per heading without more complex state
+      // So let's do a simple regex replacement on the content before rendering or after rendering.
+      // After rendering is safer for markdown-it to do its job.
+      
+      let html = md.render(content);
+      
+      // Inject IDs into headers
+      // h1 -> id="category"
+      html = html.replace(/<h1>(.*?)<\/h1>/, `<h1 id="${categoryId}">$1</h1>`);
+      // h2 (Letter) -> id="category-letter"
+      html = html.replace(/<h2>([A-Z])<\/h2>/g, (match, letter) => {
+        return `<h2 id="${categoryId}-${letter.toLowerCase()}">${letter}</h2>`;
+      });
 
-    res.send(`${htmlIndexContent}${htmlMainContent}`);
+      mainContentHtml += html;
+    }
+
+    sidebarHtml += `</div>`;
+    mainContentHtml += `</div></div>
+    <a id="top-link" href="#">top</a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.min.js"></script>
+    <script src="/app.js"></script>
+    <link rel="stylesheet" href="/styles.css">`;
+
+    res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phrasing</title>
+</head>
+<body>
+    ${sidebarHtml}
+    ${mainContentHtml}
+</body>
+</html>`);
 
   } catch(err) {
     console.error(err);
@@ -100,7 +111,6 @@ app.get('/', async (req, res) => {
   }
 });
 
-// Start server
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
