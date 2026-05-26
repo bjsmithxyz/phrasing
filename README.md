@@ -22,7 +22,7 @@ The site deploys automatically on push to `master` via [GitHub Actions](.github/
 
 **One-time setup** in your repository:
 
-1. **Settings → Pages → Build and deployment → Source**: select **GitHub Actions**.
+1. **Settings → Pages → Build and deployment → Source**: select **GitHub Actions** (not “Deploy from a branch”). If the site shows this README instead of the phrase app, the source is still set to the branch root.
 2. Push to `master`; the workflow builds `dist/` and publishes it.
 
 To deploy manually without Actions, run `npm run build` and publish the contents of `dist/`.
