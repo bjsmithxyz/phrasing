@@ -1,4 +1,9 @@
-# .gitignore
 node_modules/
+dist/
 public/data.json
 public/fuse.min.js
+/index.html
+/data.json
+/fuse.min.js
+/app.js
+/styles.css
