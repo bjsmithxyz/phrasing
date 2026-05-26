@@ -1,2 +1,4 @@
 # .gitignore
 node_modules/
+public/data.json
+public/fuse.min.js

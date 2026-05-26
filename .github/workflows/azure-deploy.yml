@@ -21,7 +21,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: phrasing        # the Azure Web App name (from your publish profile)
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # path to web app project (repo root by default)
+  AZURE_WEBAPP_PACKAGE_PATH: 'deploy' # slim deployment package (see Prepare step)
   NODE_VERSION: '20.x'                # node version to use
 
 permissions:
@@ -46,11 +46,18 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
+      - name: Prepare deployment package
+        run: |
+          npm prune --omit=dev
+          mkdir -p deploy
+          cp server.js web.config package.json package-lock.json deploy/
+          cp -r lib public md_files node_modules deploy/
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: deploy
 
   deploy:
     permissions:
@@ -64,6 +71,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
+          path: deploy
 
       - name: 'Deploy to Azure WebApp'
         id: deploy-to-webapp

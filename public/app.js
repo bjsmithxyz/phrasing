@@ -5,45 +5,76 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!input || !resultsContainer || !phrasesContainer) return;
 
-  fetch('data.json')
-    .then(response => response.json())
-    .then(data => {
-      // Data is already an array of strings (phrases) from build.js
-      const searchData = data.map(text => ({ text }));
+  const fuseOptions = {
+    includeScore: true,
+    includeMatches: true,
+    threshold: 0.3,
+    keys: ['text'],
+    limit: 50
+  };
 
-      const options = {
-        includeScore: true,
-        includeMatches: true,
-        threshold: 0.3,
-        keys: ['text'],
-        limit: 50
-      };
+  let fuse = null;
+  let initPromise = null;
 
-      const fuse = new Fuse(searchData, options);
+  async function loadSearchData() {
+    let res = await fetch('data.json');
+    if (!res.ok) res = await fetch('/data');
+    if (!res.ok) throw new Error('Search data not found');
+    return res.json();
+  }
 
-      let timeoutId;
+  function initFuse() {
+    if (!initPromise) {
+      initPromise = loadSearchData().then(data => {
+        const searchData = data.map(text => ({ text }));
+        fuse = new Fuse(searchData, fuseOptions);
+      });
+    }
+    return initPromise;
+  }
 
-      input.addEventListener('input', function (e) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          const searchValue = e.target.value;
+  function appendHighlighted(li, block, indices) {
+    let lastIndex = 0;
+    indices.forEach(([start, end]) => {
+      if (start > lastIndex) {
+        li.appendChild(document.createTextNode(block.substring(lastIndex, start)));
+      }
+      const mark = document.createElement('mark');
+      mark.textContent = block.substring(start, end + 1);
+      li.appendChild(mark);
+      lastIndex = end + 1;
+    });
+    if (lastIndex < block.length) {
+      li.appendChild(document.createTextNode(block.substring(lastIndex)));
+    }
+  }
 
-          if (!searchValue) {
-            resultsContainer.style.display = 'none';
-            phrasesContainer.style.display = 'block';
-            resultsContainer.innerHTML = '';
-            return;
-          }
+  let timeoutId;
 
+  input.addEventListener('input', function (e) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      const searchValue = e.target.value;
+
+      if (!searchValue) {
+        resultsContainer.style.display = 'none';
+        phrasesContainer.style.display = 'block';
+        resultsContainer.replaceChildren();
+        return;
+      }
+
+      initFuse()
+        .then(() => {
           const results = fuse.search(searchValue);
 
-          // Update the display based on the results
           phrasesContainer.style.display = 'none';
           resultsContainer.style.display = 'block';
-          resultsContainer.innerHTML = '';
+          resultsContainer.replaceChildren();
 
           if (results.length === 0) {
-            resultsContainer.innerHTML = '<p>No results found.</p>';
+            const p = document.createElement('p');
+            p.textContent = 'No results found.';
+            resultsContainer.appendChild(p);
             return;
           }
 
@@ -52,29 +83,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const li = document.createElement('li');
             const block = result.item.text;
 
-            // Safely handle matches
             if (!result.matches || !result.matches.length) {
               li.textContent = block;
             } else {
-              const matches = result.matches[0].indices;
-              let highlightedBlock = '';
-              let lastIndex = 0;
-
-              matches.forEach(match => {
-                highlightedBlock += block.substring(lastIndex, match[0]);
-                highlightedBlock += '<mark>' + block.substring(match[0], match[1] + 1) + '</mark>';
-                lastIndex = match[1] + 1;
-              });
-              highlightedBlock += block.substring(lastIndex);
-              li.innerHTML = highlightedBlock;
+              appendHighlighted(li, block, result.matches[0].indices);
             }
             ul.appendChild(li);
           });
           resultsContainer.appendChild(ul);
-        }, 150);
-      });
-    })
-    .catch(err => {
-      console.error('Failed to fetch data for search:', err);
-    });
+        })
+        .catch(err => {
+          console.error('Search failed:', err);
+        });
+    }, 150);
+  });
 });
