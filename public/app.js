@@ -2,6 +2,7 @@ const THEME_STORAGE_KEY = 'phrasing-theme';
 const DATA_SOURCE_KEY = 'phrasing-data-source';
 const DATA_CUSTOM_MD_KEY = 'phrasing-custom-md';
 const DATA_CUSTOM_NAME_KEY = 'phrasing-custom-name';
+const DEFAULT_SOURCE_ID = 'phrasing';
 const CUSTOM_MD_MAX_BYTES = 2 * 1024 * 1024;
 
 const THEMES = [
@@ -18,7 +19,7 @@ let fuse = null;
 let initPromise = null;
 let manifestCache = null;
 let builtinSnapshot = null;
-let currentSourceId = 'phrasing';
+let currentSourceId = DEFAULT_SOURCE_ID;
 let closeThemePanel = () => {};
 let closeDataPanel = () => {};
 
@@ -198,14 +199,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function getDefaultSourceId() {
+    return (manifestCache && manifestCache.default) || DEFAULT_SOURCE_ID;
+  }
+
   function getStoredSourceId() {
     try {
       const id = localStorage.getItem(DATA_SOURCE_KEY);
       if (id === 'custom') return 'custom';
-      if (manifestCache && manifestCache.sources.some(s => s.id === id)) return id;
-      return manifestCache ? manifestCache.default : 'phrasing';
+      if (id && manifestCache && manifestCache.sources.some(s => s.id === id)) return id;
+      return getDefaultSourceId();
     } catch {
-      return 'phrasing';
+      return DEFAULT_SOURCE_ID;
     }
   }
 
@@ -214,10 +219,11 @@ document.addEventListener('DOMContentLoaded', () => {
       throw new Error('Content renderer not loaded');
     }
 
-    if (id === 'phrasing' || id === (manifestCache && manifestCache.default)) {
+    const defaultId = getDefaultSourceId();
+    if (id === defaultId) {
       applyBuiltinSnapshot();
-      currentSourceId = 'phrasing';
-      if (persist) persistSource('phrasing');
+      currentSourceId = defaultId;
+      if (persist) persistSource(defaultId);
       return;
     }
 
@@ -243,10 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const panel = document.getElementById('data-panel');
     if (!panel) return;
     panel.querySelectorAll('.data-option').forEach(el => {
-      const match =
-        (el.dataset.source === 'phrasing' && currentSourceId === 'phrasing') ||
-        el.dataset.source === currentSourceId;
-      el.classList.toggle('is-active', match);
+      el.classList.toggle('is-active', el.dataset.source === currentSourceId);
     });
   }
 
@@ -355,6 +358,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'Escape' && !panel.hidden) closePanelFn();
     });
 
+    const defaultId = getDefaultSourceId();
+    if (!localStorage.getItem(DATA_SOURCE_KEY)) {
+      persistSource(defaultId);
+    }
+
     const stored = getStoredSourceId();
     if (stored === 'custom') {
       try {
@@ -363,9 +371,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (text) await activateSource('custom', { customText: text, customName: name, persist: false });
       } catch (err) {
         console.error(err);
-        await activateSource(manifest.default, { persist: false });
+        await activateSource(defaultId, { persist: false });
       }
-    } else if (stored !== manifest.default) {
+    } else if (stored !== defaultId) {
       try {
         await activateSource(stored, { persist: false });
       } catch (err) {
@@ -387,6 +395,8 @@ function initEasterEgg() {
   if (!btn || !burst) return;
 
   const colors = ['var(--heading-color)', 'var(--link-color)', 'var(--orange-color)', 'var(--cyan-color)'];
+  let confettiRunning = false;
+  let confettiTimer = null;
 
   if (!burst.children.length) {
     for (let i = 0; i < 12; i++) {
@@ -400,6 +410,28 @@ function initEasterEgg() {
       particle.style.background = colors[i % colors.length];
       burst.appendChild(particle);
     }
+  }
+
+  function startConfetti() {
+    if (confettiRunning) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const pad = 48;
+    const x = pad + Math.random() * (window.innerWidth - pad * 2);
+    const y = pad + Math.random() * (window.innerHeight - pad * 2);
+    burst.style.left = `${x}px`;
+    burst.style.top = `${y}px`;
+
+    confettiRunning = true;
+    burst.hidden = false;
+    burst.classList.add('is-active');
+
+    clearTimeout(confettiTimer);
+    confettiTimer = window.setTimeout(() => {
+      burst.classList.remove('is-active');
+      burst.hidden = true;
+      confettiRunning = false;
+    }, 900);
   }
 
   btn.addEventListener('click', () => {
@@ -425,22 +457,7 @@ function initEasterEgg() {
       } catch (_) {}
     }
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const pad = 48;
-    const x = pad + Math.random() * (window.innerWidth - pad * 2);
-    const y = pad + Math.random() * (window.innerHeight - pad * 2);
-    burst.style.left = `${x}px`;
-    burst.style.top = `${y}px`;
-
-    burst.hidden = false;
-    burst.classList.remove('is-active');
-    void burst.offsetWidth;
-    burst.classList.add('is-active');
-    window.setTimeout(() => {
-      burst.classList.remove('is-active');
-      burst.hidden = true;
-    }, 900);
+    startConfetti();
   });
 }
 
