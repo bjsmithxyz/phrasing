@@ -406,14 +406,32 @@ function initEasterEgg() {
     closeThemePanel();
     closeDataPanel();
 
+    btn.classList.remove('egg-spin');
+    void btn.offsetWidth;
+    btn.classList.add('egg-spin');
+    btn.addEventListener('animationend', () => btn.classList.remove('egg-spin'), { once: true });
+
     if (title) {
-      title.classList.remove('egg-shake');
+      title.classList.remove('egg-shake', 'egg-glow');
       void title.offsetWidth;
-      title.classList.add('egg-shake');
-      title.addEventListener('animationend', () => title.classList.remove('egg-shake'), { once: true });
+      title.classList.add('egg-shake', 'egg-glow');
+      const clearTitleFx = () => title.classList.remove('egg-shake', 'egg-glow');
+      title.addEventListener('animationend', clearTitleFx, { once: true });
+    }
+
+    if (navigator.vibrate) {
+      try {
+        navigator.vibrate(12);
+      } catch (_) {}
     }
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const pad = 48;
+    const x = pad + Math.random() * (window.innerWidth - pad * 2);
+    const y = pad + Math.random() * (window.innerHeight - pad * 2);
+    burst.style.left = `${x}px`;
+    burst.style.top = `${y}px`;
 
     burst.hidden = false;
     burst.classList.remove('is-active');
