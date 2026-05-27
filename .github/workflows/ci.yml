@@ -31,4 +31,4 @@ jobs:
           test ! -f dist/data.json
           test -f dist/data/manifest.json
           test -d dist/data/builtin/phrasing
-          test -d dist/data/builtin/sample
+          test -d dist/data/builtin/insults
