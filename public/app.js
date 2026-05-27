@@ -377,7 +377,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
   closeThemePanel = initThemes();
   initDataSources();
+  initEasterEgg();
 });
+
+function initEasterEgg() {
+  const btn = document.getElementById('egg-btn');
+  const burst = document.getElementById('egg-burst');
+  const title = document.querySelector('.sidebar h2');
+  if (!btn || !burst) return;
+
+  const colors = ['var(--heading-color)', 'var(--link-color)', 'var(--orange-color)', 'var(--cyan-color)'];
+
+  if (!burst.children.length) {
+    for (let i = 0; i < 12; i++) {
+      const particle = document.createElement('span');
+      particle.className = 'egg-particle';
+      const angle = (i / 12) * Math.PI * 2;
+      const dist = 55 + (i % 3) * 18;
+      particle.style.setProperty('--dx', `${Math.round(Math.cos(angle) * dist)}px`);
+      particle.style.setProperty('--dy', `${Math.round(Math.sin(angle) * dist)}px`);
+      particle.style.setProperty('--rot', `${(i * 47) % 360}deg`);
+      particle.style.background = colors[i % colors.length];
+      burst.appendChild(particle);
+    }
+  }
+
+  btn.addEventListener('click', () => {
+    closeThemePanel();
+    closeDataPanel();
+
+    if (title) {
+      title.classList.remove('egg-shake');
+      void title.offsetWidth;
+      title.classList.add('egg-shake');
+      title.addEventListener('animationend', () => title.classList.remove('egg-shake'), { once: true });
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    burst.hidden = false;
+    burst.classList.remove('is-active');
+    void burst.offsetWidth;
+    burst.classList.add('is-active');
+    window.setTimeout(() => {
+      burst.classList.remove('is-active');
+      burst.hidden = true;
+    }, 900);
+  });
+}
 
 function initThemes() {
   const btn = document.getElementById('theme-settings-btn');

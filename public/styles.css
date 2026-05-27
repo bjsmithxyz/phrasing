@@ -280,47 +280,115 @@ a:hover {
 
 .page-controls {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
+  bottom: 16px;
+  left: 10px;
   z-index: 2000;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
+  max-width: 220px;
+  box-sizing: border-box;
 }
 
 #top-link {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-decoration: none;
   background-color: var(--sidebar-bg);
-  padding: 5px 10px;
+  padding: 4px 8px;
   border-radius: 3px;
   border: 1px solid var(--border-color);
   color: var(--text-color);
+  line-height: 1.2;
 }
 
-.theme-settings-btn,
-.data-source-btn {
+.page-control-btn {
   font: inherit;
-  font-size: 0.8rem;
-  padding: 5px 10px;
+  font-size: 0.75rem;
+  padding: 4px 8px;
   margin: 0;
   border: 1px solid var(--border-color);
   border-radius: 3px;
   background-color: var(--sidebar-bg);
   color: var(--text-color);
   cursor: pointer;
+  line-height: 1.2;
 }
 
-.theme-settings-btn:hover,
-.data-source-btn:hover {
+.egg-btn {
+  font-size: 1rem;
+  padding: 2px 0;
+  width: 30px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.page-control-btn:hover {
   border-color: var(--link-color);
   color: var(--link-color);
 }
 
-.theme-settings-btn[aria-expanded="true"],
-.data-source-btn[aria-expanded="true"] {
+.page-control-btn[aria-expanded="true"] {
   border-color: var(--link-color);
   background-color: var(--border-color);
+}
+
+.sidebar h2.egg-shake {
+  animation: egg-shake 0.45s ease-in-out;
+}
+
+@keyframes egg-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px) rotate(-2deg); }
+  40% { transform: translateX(4px) rotate(2deg); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.egg-burst {
+  position: fixed;
+  left: 50%;
+  top: 42%;
+  z-index: 3000;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.egg-burst.is-active .egg-particle {
+  animation: egg-pop 0.85s ease-out forwards;
+}
+
+.egg-particle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 8px;
+  border-radius: 1px;
+  opacity: 0;
+  transform: translate(0, 0);
+}
+
+@keyframes egg-pop {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar h2.egg-shake {
+    animation: none;
+  }
+
+  .egg-burst {
+    display: none !important;
+  }
 }
 
 .theme-panel {
