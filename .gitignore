@@ -2,6 +2,8 @@ node_modules/
 dist/
 public/data.json
 public/fuse.min.js
+public/markdown-it.min.js
+public/phrasing-content.js
 /index.html
 /data.json
 /fuse.min.js

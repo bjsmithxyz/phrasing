@@ -7,6 +7,7 @@ A comprehensive collection of 15,000+ useful phrases for business, professional,
 ## Features
 
 - **Themes**: Dracula, Cursor, Orangde, Black & White, Light, Sepia, and Rose — via **settings** beside **top**.
+- **Data sources**: Built-in **Phrasing** and **Sample** corpora, or upload your own `.md` — via **data** (in-memory switch, no reload).
 - **Instant Search**: Powered by Fuse.js for fuzzy filtering across thousands of entries.
 - **Sidebar Navigation**: Quick access to categories and alphabetical indices.
 - **Performance Optimized**: Static build with search indexed from page content (no duplicate data file).
@@ -35,9 +36,11 @@ To deploy manually without Actions, run `npm run build` and publish the contents
 
 | Path | Purpose |
 |------|---------|
-| `md_files/` | Source phrase content (markdown) |
+| `data/builtin/phrasing/` | Default phrase corpus (markdown) |
+| `data/builtin/sample/` | Small demo corpus (~40 phrases) |
 | `public/` | Client assets (`app.js`, `styles.css`) |
-| `lib/render.js` | Markdown → HTML build logic |
+| `lib/content-core.js` | Shared markdown → HTML (build + browser) |
+| `lib/render.js` | Static page shell and build |
 | `dist/` | Generated site (not committed; created by `npm run build`) |
 
 ---
