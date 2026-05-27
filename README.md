@@ -7,7 +7,7 @@ A comprehensive collection of 15,000+ useful phrases for business, professional,
 - **Dracula Theme**: A vibrant, high-contrast dark mode design.
 - **Instant Search**: Powered by Fuse.js for fuzzy filtering across thousands of entries.
 - **Sidebar Navigation**: Quick access to categories and alphabetical indices.
-- **Performance Optimized**: Static build for fast loading and low overhead.
+- **Performance Optimized**: Static build with search indexed from page content (no duplicate data file).
 
 ## Getting Started
 

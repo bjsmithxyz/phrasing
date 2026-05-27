@@ -12,14 +12,14 @@ async function build() {
 
   fs.mkdirSync(distPath, { recursive: true });
 
-  const { fullHtml, searchData } = renderPage(mdPath);
-  const dataJson = JSON.stringify(searchData);
+  const { fullHtml } = renderPage(mdPath);
 
   fs.writeFileSync(path.join(distPath, 'index.html'), fullHtml);
-  fs.writeFileSync(path.join(distPath, 'data.json'), dataJson);
+  fs.writeFileSync(path.join(distPath, '.nojekyll'), '');
   fs.copyFileSync(path.join(publicPath, 'styles.css'), path.join(distPath, 'styles.css'));
   fs.copyFileSync(path.join(publicPath, 'app.js'), path.join(distPath, 'app.js'));
   fs.copyFileSync(fuseSrc, path.join(distPath, 'fuse.min.js'));
+  fs.rmSync(path.join(distPath, 'data.json'), { force: true });
 
   console.log('Build complete! Output in dist/');
 }

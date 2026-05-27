@@ -16,17 +16,24 @@ document.addEventListener('DOMContentLoaded', () => {
   let fuse = null;
   let initPromise = null;
 
-  async function loadSearchData() {
-    let res = await fetch('data.json');
-    if (!res.ok) res = await fetch('/data');
-    if (!res.ok) throw new Error('Search data not found');
-    return res.json();
+  function extractPhrases(container) {
+    const phrases = [];
+    for (const ul of container.querySelectorAll('ul')) {
+      for (const li of ul.children) {
+        if (li.tagName !== 'LI') continue;
+        const clone = li.cloneNode(true);
+        clone.querySelectorAll('ul').forEach(n => n.remove());
+        const text = clone.textContent.trim();
+        if (text) phrases.push(text);
+      }
+    }
+    return phrases;
   }
 
   function initFuse() {
     if (!initPromise) {
-      initPromise = loadSearchData().then(data => {
-        const searchData = data.map(text => ({ text }));
+      initPromise = Promise.resolve().then(() => {
+        const searchData = extractPhrases(phrasesContainer).map(text => ({ text }));
         fuse = new Fuse(searchData, fuseOptions);
       });
     }

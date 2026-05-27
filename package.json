@@ -1,19 +1,19 @@
 {
   "name": "phrasing",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "15,000+ useful phrases — static site with fuzzy search",
+  "private": true,
   "scripts": {
     "start": "node server.js",
     "build": "node build.js"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "dependencies": {
-    "compression": "^1.8.0",
-    "express": "^4.21.2",
     "fuse.js": "^6.6.2",
     "markdown-it": "^14.1.0"
+  },
+  "devDependencies": {
+    "compression": "^1.8.0",
+    "express": "^4.21.2"
   }
 }
