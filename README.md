@@ -6,8 +6,8 @@ A comprehensive collection of 15,000+ useful phrases for business, professional,
 
 ## Features
 
-- **Themes**: Dracula, Cursor, Orangde, Black & White, Light, Sepia, and Rose — via **settings** beside **top**.
-- **Data sources**: Built-in **Phrasing** and **Insults** (Shakespeare) corpora, or upload your own `.md` — via **data** (in-memory switch, no reload).
+- **Themes**: Dracula, Cursor, Orangde, Black & White, Light, Sepia, and Rose — via **theme** beside **top**.
+- **Data sources**: Built-in **Phrasing** and **Insults** (Shakespeare) corpora, or upload your own `.md` — via **data** beside **theme**.
 - **Instant Search**: Powered by Fuse.js for fuzzy filtering across thousands of entries.
 - **Sidebar Navigation**: Quick access to categories and alphabetical indices.
 - **Performance Optimized**: Static build with search indexed from page content (no duplicate data file).
