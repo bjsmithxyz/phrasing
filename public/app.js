@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!input || !resultsContainer || !phrasesContainer) return;
 
+  initThemes();
+
   const fuseOptions = {
     includeScore: true,
     includeMatches: true,
@@ -105,3 +107,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 150);
   });
 });
+
+const THEME_STORAGE_KEY = 'phrasing-theme';
+
+const THEMES = [
+  { id: 'dracula', label: 'Dracula' },
+  { id: 'light', label: 'Light' },
+  { id: 'sepia', label: 'Sepia' }
+];
+
+function initThemes() {
+  const btn = document.getElementById('theme-settings-btn');
+  const panel = document.getElementById('theme-panel');
+  const optionsRoot = panel && panel.querySelector('.theme-options');
+  if (!btn || !panel || !optionsRoot) return;
+
+  function getStoredTheme() {
+    try {
+      const t = localStorage.getItem(THEME_STORAGE_KEY);
+      return THEMES.some(x => x.id === t) ? t : 'dracula';
+    } catch {
+      return 'dracula';
+    }
+  }
+
+  function applyTheme(id) {
+    if (id === 'dracula') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', id);
+    }
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, id);
+    } catch (_) {}
+    optionsRoot.querySelectorAll('.theme-option').forEach(el => {
+      el.classList.toggle('is-active', el.dataset.theme === id);
+    });
+  }
+
+  THEMES.forEach(t => {
+    const opt = document.createElement('button');
+    opt.type = 'button';
+    opt.className = 'theme-option';
+    opt.dataset.theme = t.id;
+    opt.textContent = t.label;
+    opt.setAttribute('role', 'listitem');
+    opt.addEventListener('click', () => {
+      applyTheme(t.id);
+      closePanel();
+    });
+    optionsRoot.appendChild(opt);
+  });
+
+  applyTheme(getStoredTheme());
+
+  function openPanel() {
+    panel.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+  }
+
+  function closePanel() {
+    panel.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (panel.hidden) openPanel();
+    else closePanel();
+  });
+
+  document.addEventListener('click', () => closePanel());
+
+  panel.addEventListener('click', e => e.stopPropagation());
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !panel.hidden) closePanel();
+  });
+}

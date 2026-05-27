@@ -11,6 +11,42 @@
   --comment-color: #6272a4;
   --cyan-color: #8be9fd;
   --orange-color: #ffb86c;
+  --input-focus-ring: rgba(97, 175, 239, 0.2);
+  --muted-text: #6272a4;
+}
+
+[data-theme="light"] {
+  --bg-color: #f6f7f9;
+  --text-color: #1a1d26;
+  --link-color: #5b21b6;
+  --link-visited-color: #86198f;
+  --heading-color: #6d28d9;
+  --sidebar-bg: #e8eaef;
+  --border-color: #c5cad6;
+  --mark-bg: #16a34a;
+  --mark-text: #ffffff;
+  --comment-color: #64748b;
+  --cyan-color: #0d9488;
+  --orange-color: #c2410c;
+  --input-focus-ring: rgba(91, 33, 182, 0.2);
+  --muted-text: #64748b;
+}
+
+[data-theme="sepia"] {
+  --bg-color: #f4ecd8;
+  --text-color: #3d3426;
+  --link-color: #7c3aed;
+  --link-visited-color: #a21caf;
+  --heading-color: #6b4423;
+  --sidebar-bg: #e9dfc8;
+  --border-color: #c4b89a;
+  --mark-bg: #b45309;
+  --mark-text: #fffbeb;
+  --comment-color: #78716c;
+  --cyan-color: #0f766e;
+  --orange-color: #b45309;
+  --input-focus-ring: rgba(124, 58, 237, 0.25);
+  --muted-text: #78716c;
 }
 
 body {
@@ -32,20 +68,25 @@ body {
   top: 0;
   background-color: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
-  padding: 15px 10px;
-  overflow-y: auto;
-  /* Allow scrolling but hide scrollbar */
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE and Edge */
+  padding: 0;
   box-sizing: border-box;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
 }
 
-.sidebar::-webkit-scrollbar {
+.sidebar-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 15px 10px 8px;
+  box-sizing: border-box;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
   display: none;
-  /* Chrome, Safari and Opera */
 }
 
 .sidebar h2 {
@@ -123,7 +164,7 @@ body {
 #search-input:focus {
   outline: none;
   border-color: var(--link-color);
-  box-shadow: 0 0 0 2px rgba(97, 175, 239, 0.2);
+  box-shadow: 0 0 0 2px var(--input-focus-ring);
 }
 
 /* Phrases Content */
@@ -174,17 +215,100 @@ a:hover {
   text-decoration: underline;
 }
 
+.sidebar-controls {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--sidebar-bg);
+}
+
 #top-link {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
   font-size: 0.8rem;
   text-decoration: none;
-  background-color: var(--sidebar-bg);
+  background-color: var(--bg-color);
   padding: 5px 10px;
   border-radius: 3px;
   border: 1px solid var(--border-color);
-  z-index: 2000;
+  color: var(--text-color);
+}
+
+.theme-settings-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.theme-settings-btn:hover {
+  border-color: var(--link-color);
+  color: var(--link-color);
+}
+
+.theme-settings-btn[aria-expanded="true"] {
+  border-color: var(--link-color);
+  background-color: var(--border-color);
+}
+
+.theme-settings-icon {
+  display: block;
+}
+
+.theme-panel {
+  flex-shrink: 0;
+  padding: 0 10px 8px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--sidebar-bg);
+}
+
+.theme-panel[hidden] {
+  display: none;
+}
+
+.theme-panel-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-text);
+  margin: 8px 0 6px;
+}
+
+.theme-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.theme-option {
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  padding: 6px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.theme-option:hover {
+  border-color: var(--link-color);
+}
+
+.theme-option.is-active {
+  border-color: var(--link-color);
+  box-shadow: inset 0 0 0 1px var(--link-color);
 }
 
 /* Search Results */
@@ -213,6 +337,7 @@ mark {
   .sidebar {
     width: 100%;
     height: auto;
+    max-height: 55vh;
     position: relative;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
