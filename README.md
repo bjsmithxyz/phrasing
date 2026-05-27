@@ -2,6 +2,8 @@
 
 A comprehensive collection of 15,000+ useful phrases for business, professional, and conversational use.
 
+**Live site:** [bjsmithxyz.github.io/phrasing](https://bjsmithxyz.github.io/phrasing/)
+
 ## Features
 
 - **Dracula Theme**: A vibrant, high-contrast dark mode design.
@@ -18,7 +20,7 @@ A comprehensive collection of 15,000+ useful phrases for business, professional,
 
 ## Deployment (GitHub Pages)
 
-The site deploys automatically on push to `master` via [GitHub Actions](.github/workflows/pages.yml).
+The site deploys automatically on push to `master` via [GitHub Actions](.github/workflows/pages.yml). The live URL is [https://bjsmithxyz.github.io/phrasing/](https://bjsmithxyz.github.io/phrasing/).
 
 **One-time setup** in your repository:
 
