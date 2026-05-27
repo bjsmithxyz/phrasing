@@ -32,24 +32,6 @@
   --muted-text: #64748b;
 }
 
-/* VS Code Dark+ */
-[data-theme="edoc"] {
-  --bg-color: #1e1e1e;
-  --text-color: #d4d4d4;
-  --link-color: #569cd6;
-  --link-visited-color: #9cdcfe;
-  --heading-color: #4ec9b0;
-  --sidebar-bg: #252526;
-  --border-color: #3c3c3c;
-  --mark-bg: #ce9178;
-  --mark-text: #1e1e1e;
-  --comment-color: #6a9955;
-  --cyan-color: #4fc1ff;
-  --orange-color: #ce9178;
-  --input-focus-ring: rgba(0, 122, 204, 0.35);
-  --muted-text: #858585;
-}
-
 /* Cursor IDE dark */
 [data-theme="cursor"] {
   --bg-color: #181818;
@@ -103,22 +85,22 @@
   --muted-text: #78716c;
 }
 
-/* Deep navy night */
-[data-theme="midnight"] {
-  --bg-color: #0f1419;
-  --text-color: #c8d3e0;
-  --link-color: #7eb6ff;
-  --link-visited-color: #a8cfff;
-  --heading-color: #8bb4e8;
-  --sidebar-bg: #0a0e12;
-  --border-color: #243044;
-  --mark-bg: #3d7dd4;
-  --mark-text: #f0f6fc;
-  --comment-color: #6b7d94;
-  --cyan-color: #5eb3d4;
-  --orange-color: #e8a54b;
-  --input-focus-ring: rgba(62, 125, 212, 0.35);
-  --muted-text: #6b7d94;
+/* Pure black and white */
+[data-theme="mono"] {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --link-color: #ffffff;
+  --link-visited-color: #cccccc;
+  --heading-color: #ffffff;
+  --sidebar-bg: #000000;
+  --border-color: #ffffff;
+  --mark-bg: #ffffff;
+  --mark-text: #000000;
+  --comment-color: #999999;
+  --cyan-color: #ffffff;
+  --orange-color: #ffffff;
+  --input-focus-ring: rgba(255, 255, 255, 0.35);
+  --muted-text: #999999;
 }
 
 /* Soft rose paper */
