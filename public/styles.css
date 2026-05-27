@@ -16,20 +16,74 @@
 }
 
 [data-theme="light"] {
-  --bg-color: #f6f7f9;
-  --text-color: #1a1d26;
-  --link-color: #5b21b6;
-  --link-visited-color: #86198f;
-  --heading-color: #6d28d9;
-  --sidebar-bg: #e8eaef;
-  --border-color: #c5cad6;
-  --mark-bg: #16a34a;
+  --bg-color: #f4f5f7;
+  --text-color: #1c1e24;
+  --link-color: #1d4ed8;
+  --link-visited-color: #1e40af;
+  --heading-color: #334155;
+  --sidebar-bg: #e2e5eb;
+  --border-color: #c8cdd6;
+  --mark-bg: #d97706;
   --mark-text: #ffffff;
   --comment-color: #64748b;
-  --cyan-color: #0d9488;
-  --orange-color: #c2410c;
-  --input-focus-ring: rgba(91, 33, 182, 0.2);
+  --cyan-color: #475569;
+  --orange-color: #b45309;
+  --input-focus-ring: rgba(29, 78, 216, 0.2);
   --muted-text: #64748b;
+}
+
+/* VS Code Dark+ */
+[data-theme="edoc"] {
+  --bg-color: #1e1e1e;
+  --text-color: #d4d4d4;
+  --link-color: #569cd6;
+  --link-visited-color: #9cdcfe;
+  --heading-color: #4ec9b0;
+  --sidebar-bg: #252526;
+  --border-color: #3c3c3c;
+  --mark-bg: #ce9178;
+  --mark-text: #1e1e1e;
+  --comment-color: #6a9955;
+  --cyan-color: #4fc1ff;
+  --orange-color: #ce9178;
+  --input-focus-ring: rgba(0, 122, 204, 0.35);
+  --muted-text: #858585;
+}
+
+/* Cursor IDE dark */
+[data-theme="cursor"] {
+  --bg-color: #181818;
+  --text-color: #cccccc;
+  --link-color: #6cb6ff;
+  --link-visited-color: #a8c7fa;
+  --heading-color: #e8e8e8;
+  --sidebar-bg: #141414;
+  --border-color: #2b2b2b;
+  --mark-bg: #388bfd;
+  --mark-text: #ffffff;
+  --comment-color: #7d7d7d;
+  --cyan-color: #79c0ff;
+  --orange-color: #d29922;
+  --input-focus-ring: rgba(56, 139, 253, 0.3);
+  --muted-text: #8b8b8b;
+}
+
+/* Claude-inspired warm orange */
+[data-theme="orangde"] {
+  --bg-color: #1a1614;
+  --text-color: #ece6df;
+  --link-color: #e07a3a;
+  --link-visited-color: #f0a070;
+  --heading-color: #f4b87a;
+  --sidebar-bg: #14110f;
+  --border-color: #3d342c;
+  --mark-bg: #c96442;
+  --mark-text: #fff8f3;
+  --comment-color: #9a8b7e;
+  --cyan-color: #d4a574;
+  --orange-color: #e07a3a;
+  --input-focus-ring: rgba(224, 122, 58, 0.35);
+  --muted-text: #9a8b7e;
 }
 
 [data-theme="sepia"] {
@@ -47,6 +101,42 @@
   --orange-color: #b45309;
   --input-focus-ring: rgba(124, 58, 237, 0.25);
   --muted-text: #78716c;
+}
+
+/* Deep navy night */
+[data-theme="midnight"] {
+  --bg-color: #0f1419;
+  --text-color: #c8d3e0;
+  --link-color: #7eb6ff;
+  --link-visited-color: #a8cfff;
+  --heading-color: #8bb4e8;
+  --sidebar-bg: #0a0e12;
+  --border-color: #243044;
+  --mark-bg: #3d7dd4;
+  --mark-text: #f0f6fc;
+  --comment-color: #6b7d94;
+  --cyan-color: #5eb3d4;
+  --orange-color: #e8a54b;
+  --input-focus-ring: rgba(62, 125, 212, 0.35);
+  --muted-text: #6b7d94;
+}
+
+/* Soft rose paper */
+[data-theme="rose"] {
+  --bg-color: #faf5f6;
+  --text-color: #3d2f35;
+  --link-color: #be4b6a;
+  --link-visited-color: #9a3d56;
+  --heading-color: #7c3d4f;
+  --sidebar-bg: #f0e6e9;
+  --border-color: #dcc5cc;
+  --mark-bg: #d97706;
+  --mark-text: #ffffff;
+  --comment-color: #8b737a;
+  --cyan-color: #6b5b62;
+  --orange-color: #c2410c;
+  --input-focus-ring: rgba(190, 75, 106, 0.25);
+  --muted-text: #8b737a;
 }
 
 body {
@@ -253,12 +343,15 @@ a:hover {
   bottom: 56px;
   left: 20px;
   z-index: 2000;
-  width: 140px;
+  width: 148px;
+  max-height: min(50vh, 360px);
+  overflow-y: auto;
   padding: 8px 10px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   background-color: var(--sidebar-bg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  scrollbar-width: thin;
 }
 
 .theme-panel[hidden] {

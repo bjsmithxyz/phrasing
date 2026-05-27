@@ -6,7 +6,7 @@ A comprehensive collection of 15,000+ useful phrases for business, professional,
 
 ## Features
 
-- **Dracula Theme**: A vibrant, high-contrast dark mode design (plus Light and Sepia themes via the sidebar settings button).
+- **Themes**: Dracula, edoC (VS Code), Cursor, Orangde, Light, Sepia, Midnight, and Rose — via **settings** beside **top**.
 - **Instant Search**: Powered by Fuse.js for fuzzy filtering across thousands of entries.
 - **Sidebar Navigation**: Quick access to categories and alphabetical indices.
 - **Performance Optimized**: Static build with search indexed from page content (no duplicate data file).

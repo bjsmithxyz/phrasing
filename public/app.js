@@ -112,8 +112,13 @@ const THEME_STORAGE_KEY = 'phrasing-theme';
 
 const THEMES = [
   { id: 'dracula', label: 'Dracula' },
+  { id: 'edoc', label: 'edoC' },
+  { id: 'cursor', label: 'Cursor' },
+  { id: 'orangde', label: 'Orangde' },
   { id: 'light', label: 'Light' },
-  { id: 'sepia', label: 'Sepia' }
+  { id: 'sepia', label: 'Sepia' },
+  { id: 'midnight', label: 'Midnight' },
+  { id: 'rose', label: 'Rose' }
 ];
 
 function initThemes() {
