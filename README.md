@@ -22,6 +22,8 @@ A comprehensive collection of 15,000+ useful phrases for business, professional,
 
 The site deploys automatically on push to `master` via [GitHub Actions](.github/workflows/pages.yml). The live URL is [https://bjsmithxyz.github.io/phrasing/](https://bjsmithxyz.github.io/phrasing/).
 
+Pull requests run [CI](.github/workflows/ci.yml) (`npm ci` + `npm run build`) before merge.
+
 **One-time setup** in your repository:
 
 1. **Settings → Pages → Build and deployment → Source**: select **GitHub Actions** (not “Deploy from a branch”). If the site shows this README instead of the phrase app, the source is still set to the branch root.
